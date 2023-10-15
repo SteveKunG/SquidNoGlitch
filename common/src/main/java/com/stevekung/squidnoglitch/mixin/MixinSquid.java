@@ -24,7 +24,7 @@ public class MixinSquid extends WaterAnimal
 
     /**
      * Fix for <a href="https://bugs.mojang.com/browse/MC-39263">MC-39263</a>, <a href="https://bugs.mojang.com/browse/MC-58294">MC-58294</a>, <a href="https://bugs.mojang.com/browse/MC-89883">MC-89883</a>, <a href="https://bugs.mojang.com/browse/MC-136421">MC-136421</a>, <a href="https://bugs.mojang.com/browse/MC-212213">MC-212213</a>, <a href="https://bugs.mojang.com/browse/MC-225422">MC-225422</a>
-     * and partically fix <a href="https://bugs.mojang.com/browse/MC-134626">MC-134626</a>
+     * and partially fix <a href="https://bugs.mojang.com/browse/MC-134626">MC-134626</a>
      *
      * <p> Add {@link net.minecraft.world.entity.LivingEntity#isEffectiveAi()} check to prevent movement de-sync on the server.</p>
      */
@@ -38,7 +38,7 @@ public class MixinSquid extends WaterAnimal
     }
 
     /**
-     * <p>Fix Levitation doesn't apply reset fall distance, no bug reported yet.</p>
+     * <p>Fix Levitation effect doesn't apply reset fall distance, no bug reported yet.</p>
      */
     @Inject(method = "aiStep", at = @At(value = "INVOKE", target = "net/minecraft/world/entity/animal/Squid.getEffect(Lnet/minecraft/world/effect/MobEffect;)Lnet/minecraft/world/effect/MobEffectInstance;"))
     private void squidnoglitch$resetFallDistanceForLevitation(CallbackInfo info)
@@ -51,7 +51,7 @@ public class MixinSquid extends WaterAnimal
      *
      * <p>Code taken from <a href="https://bugs.mojang.com/browse/MC-167008">MC-167008</a> and credit to <a href="https://bugs.mojang.com/secure/ViewProfile.jspa?name=Thumpbacker">Thumpbacker</a></p>
      *
-     * <p>Add Slow Falling movement vector to squids. And reset fall distance.</p>
+     * <p>Adding Slow Falling effect movement vector to squids. And reset fall distance.</p>
      */
     @ModifyVariable(method = "aiStep", at = @At(value = "STORE", ordinal = 0), slice = @Slice(from = @At(value = "INVOKE", target = "net/minecraft/world/entity/animal/Squid.getDeltaMovement()Lnet/minecraft/world/phys/Vec3;", ordinal = 1)), index = 1, ordinal = 0)
     private double squidnoglitch$addSlowFallingSpeed(double defaultValue)
@@ -67,7 +67,7 @@ public class MixinSquid extends WaterAnimal
     /**
      * Fix for <a href="https://bugs.mojang.com/browse/MC-132473">MC-132473</a>
      *
-     * <p>Decreasing movement vector for Y to {@code 0.15f} should stop squids become stuck on land.</p>
+     * <p>Decreasing Y movement vector to {@code 0.15f} which should stop squids become stuck on land.</p>
      */
     @Mixin(targets = "net.minecraft.world.entity.animal.Squid$SquidRandomMovementGoal", priority = 1001)
     public static class SquidRandomMovementGoal_MC132473
