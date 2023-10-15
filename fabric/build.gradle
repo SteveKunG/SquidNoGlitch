@@ -75,7 +75,7 @@ def uploadDebug = true
 curseforge {
     apiKey = project.hasProperty("curseforge_api_token") ? project.curseforge_api_token : ""
     project {
-        id = "907390"
+        id = "923510"
         changelog = rootProject.file("CHANGE_LOG.md")
         changelogType = "markdown"
         releaseType = "release"
