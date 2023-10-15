@@ -22,7 +22,7 @@ configurations {
 
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
-    modLocalRuntime "maven.modrinth:lazydfu:0.1.2"
+    modLocalRuntime "maven.modrinth:lazydfu:0.1.3"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
@@ -82,7 +82,11 @@ curseforge {
         addGameVersion "Fabric"
         addGameVersion "Quilt"
         addGameVersion "Java 17"
-        addGameVersion "1.18.2"
+        addGameVersion "1.19.2"
+        addGameVersion "1.19.3"
+        addGameVersion "1.19.4"
+        addGameVersion "1.20.1"
+        addGameVersion "1.20.2"
 
         mainArtifact(remapJar.archiveFile) {
             it.displayName = "[Fabric ${supported_version}] SquidNoGlitch v${mod_version}"
@@ -107,6 +111,6 @@ modrinth {
     versionNumber = project.mod_version + "-fabric"
     versionType = "release"
     uploadFile = remapJar
-    gameVersions = ["1.18.2"]
+    gameVersions = ["1.19.2", "1.19.3", "1.19.4", "1.20.1", "1.20.2"]
     loaders = ["fabric", "quilt"]
 }

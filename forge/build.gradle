@@ -27,7 +27,7 @@ configurations {
 dependencies {
     forge "net.minecraftforge:forge:${mc_version}-${forge_version}"
 
-    modRuntimeOnly "curse.maven:lazy-dfu-forge-460819:3544496"
+    modRuntimeOnly "curse.maven:lazy-dfu-forge-460819:3831644"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive false }
@@ -87,7 +87,11 @@ curseforge {
         releaseType = "release"
         addGameVersion "Forge"
         addGameVersion "Java 17"
-        addGameVersion "1.18.2"
+        addGameVersion "1.19.2"
+        addGameVersion "1.19.3"
+        addGameVersion "1.19.4"
+        addGameVersion "1.20.1"
+        addGameVersion "1.20.2"
 
         mainArtifact(remapJar.archiveFile) {
             it.displayName = "[Forge ${supported_version}] SquidNoGlitch v${mod_version}"
@@ -112,6 +116,6 @@ modrinth {
     versionNumber = project.mod_version + "-forge"
     versionType = "release"
     uploadFile = remapJar
-    gameVersions = ["1.18.2"]
+    gameVersions = ["1.19.2", "1.19.3", "1.19.4", "1.20.1", "1.20.2"]
     loaders = ["forge"]
 }
