@@ -1,0 +1,117 @@
+architectury {
+    platformSetupLoomIde()
+    forge()
+}
+
+loom {
+    forge {
+        mixinConfig "mixins.squidnoglitch.json"
+    }
+
+    runs {
+        client {
+            property "mixin.debug.export", "true"
+            property "mixin.hotSwap", "true"
+        }
+    }
+}
+
+configurations {
+    common
+    shadowCommon
+    compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+    developmentForge.extendsFrom common
+}
+
+dependencies {
+    forge "net.minecraftforge:forge:${mc_version}-${forge_version}"
+
+    modRuntimeOnly "curse.maven:lazy-dfu-forge-460819:3544496"
+
+    common(project(path: ":common", configuration: "namedElements")) { transitive false }
+    shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive false }
+}
+
+processResources {
+    inputs.property "version", rootProject.mod_version
+
+    filesMatching("META-INF/mods.toml") {
+        expand "version": rootProject.mod_version
+    }
+}
+
+String fileName = "${archives_base_name}-mc${supported_version}"
+
+shadowJar {
+    configurations = [project.configurations.shadowCommon]
+    archiveClassifier = "dev"
+    archiveVersion = "v${mod_version}"
+    archiveBaseName = fileName
+}
+
+remapJar {
+    inputFile.set shadowJar.archiveFile
+    dependsOn shadowJar
+    archiveClassifier = "forge"
+    archiveVersion = "v${mod_version}"
+    archiveBaseName = fileName
+}
+
+components.java {
+    withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
+        skip()
+    }
+}
+
+//TODO https://github.com/SpongePowered/Mixin/issues/408
+/*afterEvaluate {
+    loom {
+        runs {
+            configureEach {
+                def mixinJarFile = configurations.compileClasspath.files { it.name == "mixin-patched" }.first()
+                vmArg("-javaagent:$mixinJarFile")
+            }
+        }
+    }
+}*/
+
+def uploadDebug = true
+
+curseforge {
+    apiKey = project.hasProperty("curseforge_api_token") ? project.curseforge_api_token : ""
+    project {
+        id = "907390"
+        changelog = rootProject.file("CHANGE_LOG.md")
+        changelogType = "markdown"
+        releaseType = "release"
+        addGameVersion "Forge"
+        addGameVersion "Java 17"
+        addGameVersion "1.18.2"
+
+        mainArtifact(remapJar.archiveFile) {
+            it.displayName = "[Forge ${supported_version}] SquidNoGlitch v${mod_version}"
+        }
+        afterEvaluate {
+            uploadTask.dependsOn(remapJar)
+        }
+    }
+    options {
+        debug uploadDebug
+        forgeGradleIntegration = false
+    }
+}
+
+modrinth {
+    debugMode = uploadDebug
+    token = project.hasProperty("modrinth_api_token") ? project.modrinth_api_token : ""
+    projectId = "squid-no-glitch"
+    changelog = rootProject.file("CHANGE_LOG.md").text
+    syncBodyFrom = rootProject.file("README.md").text
+    versionName = "[Forge ${supported_version}] SquidNoGlitch v${mod_version}"
+    versionNumber = project.mod_version + "-forge"
+    versionType = "release"
+    uploadFile = remapJar
+    gameVersions = ["1.18.2"]
+    loaders = ["forge"]
+}

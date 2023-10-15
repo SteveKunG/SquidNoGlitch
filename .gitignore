@@ -1,0 +1,7 @@
+# folder
+.architectury-transformer
+.cache
+.gradle
+.idea
+build
+run

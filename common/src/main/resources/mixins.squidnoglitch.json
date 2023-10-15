@@ -1,0 +1,14 @@
+{
+    "required": true,
+    "minVersion": "0.8.5",
+    "package": "com.stevekung.squidnoglitch.mixin",
+    "compatibilityLevel": "JAVA_17",
+    "mixins": [
+        "MixinSquid",
+        "MixinSquid$SquidRandomMovementGoal_MC132473",
+        "MixinSquid$SquidRandomMovementGoal_MC212687"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}

@@ -1,0 +1,13 @@
+modLoader = "javafml"
+loaderVersion = "[40,)"
+license = "MIT"
+issueTrackerURL = "https://github.com/SteveKunG/SquidNoGlitch/issues"
+
+[[mods]]
+modId = "squidnoglitch"
+version = "${version}"
+displayName = "Squid No Glitch"
+description = "A very small mod that fixes various vanilla bugs with the squid"
+displayURL = "https://modrinth.com/mod/squid-no-glitch"
+logoFile = "logo.png"
+authors = "SteveKunG"
