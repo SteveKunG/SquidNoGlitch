@@ -3,7 +3,7 @@
     "id": "squidnoglitch",
     "version": "${version}",
     "name": "Squid No Glitch",
-    "description": "A very small mod that fixes various vanilla bugs with the squid",
+    "description": "A tiny mod that fixes various vanilla bugs with the squid",
     "authors": [
         "SteveKunG"
     ],
