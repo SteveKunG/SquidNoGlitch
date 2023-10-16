@@ -13,5 +13,6 @@ Download on [Modrinth](https://modrinth.com/mod/squid-no-glitch)/[CurseForge](ht
 - Removing `getNoActionTime()` check will restore the movement of squid if the player is far from them. [MC-212687](https://bugs.mojang.com/browse/MC-212687).
 
 ### Installation
+Make sure to install on both client and server side for a better result!
 - Install Fabric Loader/MinecraftForge
 - Copy mod into `mods` folder
