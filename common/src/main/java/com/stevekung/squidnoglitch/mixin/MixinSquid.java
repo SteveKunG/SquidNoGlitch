@@ -26,7 +26,7 @@ public class MixinSquid extends WaterAnimal
      * Fix for <a href="https://bugs.mojang.com/browse/MC-39263">MC-39263</a>, <a href="https://bugs.mojang.com/browse/MC-58294">MC-58294</a>, <a href="https://bugs.mojang.com/browse/MC-89883">MC-89883</a>, <a href="https://bugs.mojang.com/browse/MC-136421">MC-136421</a>, <a href="https://bugs.mojang.com/browse/MC-212213">MC-212213</a>, <a href="https://bugs.mojang.com/browse/MC-225422">MC-225422</a>
      * and partially fix <a href="https://bugs.mojang.com/browse/MC-134626">MC-134626</a>
      *
-     * <p> Add {@link net.minecraft.world.entity.LivingEntity#isEffectiveAi()} check to prevent movement de-sync on the server.</p>
+     * <p> Add {@link net.minecraft.world.entity.LivingEntity#isEffectiveAi()} check to prevent movement de-sync on the client.</p>
      */
     @Override
     public void travel(Vec3 travelVector)
