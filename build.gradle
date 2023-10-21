@@ -65,12 +65,6 @@ allprojects {
     }
 }
 
-tasks.register("curseforgeModrinthFabric") {
-    group "publishing"
-    dependsOn ":fabric:modrinth"
-    dependsOn ":fabric:curseforge"
-}
-
 tasks.register("curseforgeModrinthForge") {
     group "publishing"
     dependsOn ":forge:modrinth"
