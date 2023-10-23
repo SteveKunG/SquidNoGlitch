@@ -23,15 +23,15 @@ public class MixinSquid extends WaterAnimal
     }
 
     /**
-     * Fix for <a href="https://bugs.mojang.com/browse/MC-39263">MC-39263</a>, <a href="https://bugs.mojang.com/browse/MC-58294">MC-58294</a>, <a href="https://bugs.mojang.com/browse/MC-89883">MC-89883</a>, <a href="https://bugs.mojang.com/browse/MC-136421">MC-136421</a>, <a href="https://bugs.mojang.com/browse/MC-212213">MC-212213</a>, <a href="https://bugs.mojang.com/browse/MC-225422">MC-225422</a>
-     * and partially fix <a href="https://bugs.mojang.com/browse/MC-134626">MC-134626</a>
+     * <p>Fix for <a href="https://bugs.mojang.com/browse/MC-39263">MC-39263</a>, <a href="https://bugs.mojang.com/browse/MC-58294">MC-58294</a>, <a href="https://bugs.mojang.com/browse/MC-89883">MC-89883</a>, <a href="https://bugs.mojang.com/browse/MC-136421">MC-136421</a>, <a href="https://bugs.mojang.com/browse/MC-212213">MC-212213</a>, <a href="https://bugs.mojang.com/browse/MC-225422">MC-225422</a>
+     * and partially fix <a href="https://bugs.mojang.com/browse/MC-134626">MC-134626</a></p>
      *
-     * <p> Add {@link net.minecraft.world.entity.LivingEntity#isEffectiveAi()} check to prevent movement de-sync on the client.</p>
+     * <p>Add {@link net.minecraft.world.entity.LivingEntity#isEffectiveAi()} or {@link net.minecraft.world.entity.Entity#isControlledByLocalInstance()} check to prevent movement de-sync on the client.</p>
      */
     @Override
     public void travel(Vec3 travelVector)
     {
-        if (this.isEffectiveAi())
+        if (this.isEffectiveAi() || this.isControlledByLocalInstance())
         {
             this.move(MoverType.SELF, this.getDeltaMovement());
         }
@@ -47,7 +47,7 @@ public class MixinSquid extends WaterAnimal
     }
 
     /**
-     * Fix for <a href="https://bugs.mojang.com/browse/MC-167008">MC-167008</a>
+     * <p>Fix for <a href="https://bugs.mojang.com/browse/MC-167008">MC-167008</a></p>
      *
      * <p>Code taken from <a href="https://bugs.mojang.com/browse/MC-167008">MC-167008</a> and credit to <a href="https://bugs.mojang.com/secure/ViewProfile.jspa?name=Thumpbacker">Thumpbacker</a></p>
      *
@@ -65,7 +65,7 @@ public class MixinSquid extends WaterAnimal
     }
 
     /**
-     * Fix for <a href="https://bugs.mojang.com/browse/MC-132473">MC-132473</a>
+     * <p>Fix for <a href="https://bugs.mojang.com/browse/MC-132473">MC-132473</a></p>
      *
      * <p>Decreasing Y movement vector to {@code 0.15f} which should stop squids become stuck on land.</p>
      */
@@ -80,11 +80,11 @@ public class MixinSquid extends WaterAnimal
     }
 
     /**
-     * Fix <a href="https://bugs.mojang.com/browse/MC-212687">MC-212687</a>
+     * <p>Fix <a href="https://bugs.mojang.com/browse/MC-212687">MC-212687</a></p>
      *
-     * <p> Removing {@link net.minecraft.world.entity.LivingEntity#getNoActionTime()} check will restore the movement of squid if the player is far from them.</p>
+     * <p>Removing {@link net.minecraft.world.entity.LivingEntity#getNoActionTime()} check will restore the movement of squid if the player is far from them.</p>
      *
-     * <p> FYI: I'm not sure what is a Mojang standard for mobs that are far from the player. Since Dolphins and Turtles doesn't freeze their movement when the player is far from them. </p>
+     * <p>FYI: I'm not sure what is a Mojang standard for mobs that are far from the player. Since Dolphins and Turtles doesn't freeze their movement when the player is far from them.</p>
      */
     @Mixin(targets = "net.minecraft.world.entity.animal.Squid$SquidRandomMovementGoal")
     public abstract static class SquidRandomMovementGoal_MC212687 extends Goal
