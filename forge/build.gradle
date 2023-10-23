@@ -41,7 +41,7 @@ processResources {
     }
 }
 
-String fileName = "${archives_base_name}-mc${supported_version}"
+String fileName = "${archives_base_name}-mc${mc_version}"
 
 shadowJar {
     configurations = [project.configurations.shadowCommon]
@@ -90,7 +90,7 @@ curseforge {
         addGameVersion "1.19.2"
 
         mainArtifact(remapJar.archiveFile) {
-            it.displayName = "[Forge ${supported_version}] SquidNoGlitch v${mod_version}"
+            it.displayName = "[Forge ${mc_version}] SquidNoGlitch v${mod_version}"
         }
         afterEvaluate {
             uploadTask.dependsOn(remapJar)
@@ -108,7 +108,7 @@ modrinth {
     projectId = "squid-no-glitch"
     changelog = rootProject.file("CHANGE_LOG.md").text
     syncBodyFrom = rootProject.file("README.md").text
-    versionName = "[Forge ${supported_version}] SquidNoGlitch v${mod_version}"
+    versionName = "[Forge ${mc_version}] SquidNoGlitch v${mod_version}"
     versionNumber = project.mod_version + "-forge"
     versionType = "release"
     uploadFile = remapJar
