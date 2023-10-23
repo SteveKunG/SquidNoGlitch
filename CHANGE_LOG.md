@@ -1,1 +1,1 @@
-* First release
+* Add `isControlledByLocalInstance` check
