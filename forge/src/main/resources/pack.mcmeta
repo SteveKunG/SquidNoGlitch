@@ -1,6 +1,6 @@
 {
   "pack": {
-    "pack_format": 8,
+    "pack_format": 9,
     "description": "Pack for SquidNoGlitch Mod",
     "forge:resource_pack_format": 8,
     "forge:data_pack_format": 9

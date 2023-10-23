@@ -11,3 +11,10 @@ description = "A tiny mod that fixes various vanilla bugs with the squid"
 displayURL = "https://modrinth.com/mod/squid-no-glitch"
 logoFile = "logo.png"
 authors = "SteveKunG"
+
+[[dependencies.squidnoglitch]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.18.2]"
+ordering = "NONE"
+side = "BOTH"
