@@ -5,13 +5,13 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.animal.Squid;
 import net.minecraft.world.entity.animal.WaterAnimal;
+import net.minecraft.world.level.block.BubbleColumnBlock;
 import net.minecraft.world.phys.Vec3;
 
 @Mixin(Squid.class)
@@ -35,6 +35,47 @@ public class MixinSquid extends WaterAnimal
         {
             this.move(MoverType.SELF, this.getDeltaMovement());
         }
+    }
+
+    /**
+     * <p>Fix for <a href="https://bugs.mojang.com/browse/MC-134626">MC-134626</a>.</p>
+     *
+     * <p>Dumbest fix when the squid is inside or above the bubble column block. Logics taken from {@link net.minecraft.world.entity.Entity#onInsideBubbleColumn(boolean)} and {@link net.minecraft.world.entity.Entity#onAboveBubbleCol(boolean)}.</p>
+     */
+    @ModifyArg(method = "aiStep", at = @At(value = "INVOKE", target = "net/minecraft/world/entity/animal/Squid.setDeltaMovement(DDD)V"), slice = @Slice(to = @At(value = "INVOKE", target = "net/minecraft/world/phys/Vec3.horizontalDistance()D")), index = 1)
+    private double squidnoglitch$addBubbleColumnMovement(double y)
+    {
+        var bubbleYMovement = 0.0d;
+        var prevY = this.getDeltaMovement().y;
+        var blockState = this.level.getBlockState(this.blockPosition());
+        var aboveBlockState = this.level.getBlockState(this.blockPosition().above());
+
+        if (aboveBlockState.isAir())
+        {
+            if (aboveBlockState.getBlock() instanceof BubbleColumnBlock)
+            {
+                if (aboveBlockState.getValue(BubbleColumnBlock.DRAG_DOWN))
+                {
+                    bubbleYMovement = Math.max(-0.9, prevY - 0.03);
+                }
+                else
+                {
+                    bubbleYMovement = Math.min(1.8, prevY + 0.1);
+                }
+            }
+        }
+        if (blockState.getBlock() instanceof BubbleColumnBlock)
+        {
+            if (blockState.getValue(BubbleColumnBlock.DRAG_DOWN))
+            {
+                bubbleYMovement = Math.max(-0.3, prevY - 0.03);
+            }
+            else
+            {
+                bubbleYMovement = Math.min(0.7, prevY + 0.06);
+            }
+        }
+        return y + bubbleYMovement;
     }
 
     /**
