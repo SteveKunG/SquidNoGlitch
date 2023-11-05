@@ -47,8 +47,8 @@ public class MixinSquid extends WaterAnimal
     {
         var bubbleYMovement = 0.0d;
         var prevY = this.getDeltaMovement().y;
-        var blockState = this.level.getBlockState(this.blockPosition());
-        var aboveBlockState = this.level.getBlockState(this.blockPosition().above());
+        var blockState = this.getLevel().getBlockState(this.blockPosition());
+        var aboveBlockState = this.getLevel().getBlockState(this.blockPosition().above());
 
         if (aboveBlockState.isAir())
         {
