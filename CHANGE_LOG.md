@@ -1,1 +1,1 @@
-* Add `isControlledByLocalInstance` check
+* Add fix for `MC-134626` - Squids are not being pulled down or pushed up with Bubble Column block.
