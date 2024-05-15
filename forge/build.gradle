@@ -17,7 +17,7 @@ loom {
 }
 
 dependencies {
-    modRuntimeOnly "curse.maven:lazy-dfu-forge-460819:3477571"
+    modRuntimeOnly "curse.maven:lazy-dfu-forge-460819:3831644"
 }
 
 String fileName = "${archives_base_name}-mc${minecraft_version}"
