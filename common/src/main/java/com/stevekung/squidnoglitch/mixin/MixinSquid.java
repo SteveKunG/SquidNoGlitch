@@ -7,34 +7,17 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.animal.AgeableWaterCreature;
 import net.minecraft.world.entity.animal.Squid;
-import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.level.block.BubbleColumnBlock;
-import net.minecraft.world.phys.Vec3;
 
 @Mixin(Squid.class)
-public class MixinSquid extends WaterAnimal
+public abstract class MixinSquid extends AgeableWaterCreature
 {
     MixinSquid()
     {
         super(null, null);
-    }
-
-    /**
-     * <p>Fix for <a href="https://bugs.mojang.com/browse/MC-39263">MC-39263</a>, <a href="https://bugs.mojang.com/browse/MC-58294">MC-58294</a>, <a href="https://bugs.mojang.com/browse/MC-89883">MC-89883</a>, <a href="https://bugs.mojang.com/browse/MC-136421">MC-136421</a>, <a href="https://bugs.mojang.com/browse/MC-212213">MC-212213</a>, <a href="https://bugs.mojang.com/browse/MC-225422">MC-225422</a>
-     * and partially fix <a href="https://bugs.mojang.com/browse/MC-134626">MC-134626</a></p>
-     *
-     * <p>Add {@link net.minecraft.world.entity.LivingEntity#isEffectiveAi()} or {@link net.minecraft.world.entity.Entity#isControlledByLocalInstance()} check to prevent movement de-sync on the client.</p>
-     */
-    @Override
-    public void travel(Vec3 travelVector)
-    {
-        if (this.isEffectiveAi() || this.isControlledByLocalInstance())
-        {
-            this.move(MoverType.SELF, this.getDeltaMovement());
-        }
     }
 
     /**
