@@ -2,7 +2,6 @@ package com.stevekung.squidnoglitch.mixin;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -18,8 +17,6 @@ import net.minecraft.world.phys.Vec3;
 public abstract class MixinSquid extends AgeableWaterCreature implements SquidAccessor
 {
     @Shadow
-    @Final
-    @Mutable
     Vec3 movementVector;
 
     MixinSquid()
@@ -49,7 +46,7 @@ public abstract class MixinSquid extends AgeableWaterCreature implements SquidAc
      *
      * <p>Adding Slow Falling effect movement vector to squids. And reset fall distance.</p>
      */
-    @ModifyVariable(method = "aiStep", at = @At(value = "STORE", ordinal = 0), slice = @Slice(from = @At(value = "INVOKE", target = "net/minecraft/world/entity/animal/Squid.getDeltaMovement()Lnet/minecraft/world/phys/Vec3;", ordinal = 1)), index = 1, ordinal = 0)
+    @ModifyVariable(method = "aiStep", at = @At(value = "STORE", ordinal = 0), slice = @Slice(from = @At(value = "FIELD", target = "net/minecraft/world/phys/Vec3.y:D", ordinal = 1)), index = 1, ordinal = 0)
     private double squidnoglitch$addSlowFallingSpeed(double defaultValue)
     {
         if (this.hasEffect(MobEffects.SLOW_FALLING))
