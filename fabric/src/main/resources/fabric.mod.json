@@ -1,9 +1,9 @@
 {
     "schemaVersion": 1,
-    "id": "squidnoglitch",
+    "id": "${mod_id}",
     "version": "${version}",
-    "name": "Squid No Glitch",
-    "description": "A tiny mod that fixes various vanilla bugs with the squid",
+    "name": "${display_name}",
+    "description": "${mod_description}",
     "authors": [
         "SteveKunG"
     ],
