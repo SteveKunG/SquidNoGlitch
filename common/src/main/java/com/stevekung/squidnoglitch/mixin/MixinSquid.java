@@ -1,26 +1,112 @@
 package com.stevekung.squidnoglitch.mixin;
 
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import org.objectweb.asm.Opcodes;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.stevekung.squidnoglitch.SquidExtender;
+
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.animal.Squid;
 import net.minecraft.world.entity.animal.WaterAnimal;
-import net.minecraft.world.level.block.BubbleColumnBlock;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 @Mixin(Squid.class)
-public class MixinSquid extends WaterAnimal
+public class MixinSquid extends WaterAnimal implements SquidExtender
 {
+    @Unique
+    private Vec3 movementVector = Vec3.ZERO;
+
     MixinSquid()
     {
         super(null, null);
     }
+
+    /*
+     * <p>Fix for <a href="https://bugs.mojang.com/browse/MC-134626">MC-134626</a>.</p>
+     *
+     * //////////////////////////////////////////////////////////////////////////////////////
+     * ///////////////////////// START SECTION FOR FIX MC-134626 ////////////////////////////
+     * //////////////////////////////////////////////////////////////////////////////////////
+     *
+     */
+
+    @Override
+    public void squidnoglitch$setMovementVector(Vec3 vec3)
+    {
+        this.movementVector = vec3;
+    }
+
+    /***
+     * @author SteveKunG
+     * @reason Check new {@linkplain movementVector} instead.
+     */
+    @Overwrite
+    public boolean hasMovementVector()
+    {
+        return this.movementVector.lengthSqr() > 1.0E-5F;
+    }
+
+    /***
+     * @author SteveKunG
+     * @reason Use new {@link SquidExtender#squidnoglitch$setMovementVector(Vec3)}
+     */
+    @Overwrite
+    public void setMovementVector(float f, float g, float h)
+    {
+        this.squidnoglitch$setMovementVector(new Vec3(f, g, h));
+    }
+
+    @WrapWithCondition(method = "aiStep", at = @At(
+            value = "FIELD",
+            target = "net/minecraft/world/entity/animal/Squid.speed:F",
+            opcode = Opcodes.PUTFIELD,
+            ordinal = 0))
+    private boolean setDeltaMovementInTentacleMovementLogic(Squid squid, float newValue)
+    {
+        if (this.isControlledByLocalInstance())
+        {
+            this.setDeltaMovement(this.movementVector);
+        }
+        return false;
+    }
+
+    @WrapWithCondition(method = "aiStep", at = @At(
+            value = "FIELD",
+            target = "net/minecraft/world/entity/animal/Squid.speed:F",
+            opcode = Opcodes.PUTFIELD,
+            ordinal = 1))
+    private boolean setDeltaMovementOnScaleMovementSpeed(Squid squid, float newValue)
+    {
+        if (this.isControlledByLocalInstance())
+        {
+            this.setDeltaMovement(this.getDeltaMovement().scale(0.9));
+        }
+        return false;
+    }
+
+    @WrapOperation(method = "aiStep", at = @At(
+            value = "FIELD",
+            target = "net/minecraft/world/level/Level.isClientSide:Z",
+            ordinal = 1))
+    private boolean disableOldSetDeltaMovement(Level level, Operation<Boolean> operation)
+    {
+        return false;
+    }
+
+    /*
+     * //////////////////////////////////////////////////////////////////////////////////////
+     * ///////////////////////// END SECTION FOR FIX MC-134626 ////////////////////////////
+     * //////////////////////////////////////////////////////////////////////////////////////
+     */
 
     /**
      * <p>Fix for <a href="https://bugs.mojang.com/browse/MC-39263">MC-39263</a>, <a href="https://bugs.mojang.com/browse/MC-58294">MC-58294</a>, <a href="https://bugs.mojang.com/browse/MC-89883">MC-89883</a>, <a href="https://bugs.mojang.com/browse/MC-136421">MC-136421</a>, <a href="https://bugs.mojang.com/browse/MC-212213">MC-212213</a>, <a href="https://bugs.mojang.com/browse/MC-225422">MC-225422</a>
@@ -31,51 +117,10 @@ public class MixinSquid extends WaterAnimal
     @Override
     public void travel(Vec3 travelVector)
     {
-        if (this.isEffectiveAi() || this.isControlledByLocalInstance())
+        if (this.isControlledByLocalInstance())
         {
             this.move(MoverType.SELF, this.getDeltaMovement());
         }
-    }
-
-    /**
-     * <p>Fix for <a href="https://bugs.mojang.com/browse/MC-134626">MC-134626</a>.</p>
-     *
-     * <p>Dumbest fix when the squid is inside or above the bubble column block. Logics taken from {@link net.minecraft.world.entity.Entity#onInsideBubbleColumn(boolean)} and {@link net.minecraft.world.entity.Entity#onAboveBubbleCol(boolean)}.</p>
-     */
-    @ModifyArg(method = "aiStep", at = @At(value = "INVOKE", target = "net/minecraft/world/entity/animal/Squid.setDeltaMovement(DDD)V"), slice = @Slice(to = @At(value = "INVOKE", target = "net/minecraft/world/phys/Vec3.horizontalDistance()D")), index = 1)
-    private double squidnoglitch$addBubbleColumnMovement(double y)
-    {
-        var bubbleYMovement = 0.0d;
-        var prevY = this.getDeltaMovement().y;
-        var blockState = this.getLevel().getBlockState(this.blockPosition());
-        var aboveBlockState = this.getLevel().getBlockState(this.blockPosition().above());
-
-        if (aboveBlockState.isAir())
-        {
-            if (aboveBlockState.getBlock() instanceof BubbleColumnBlock)
-            {
-                if (aboveBlockState.getValue(BubbleColumnBlock.DRAG_DOWN))
-                {
-                    bubbleYMovement = Math.max(-0.9, prevY - 0.03);
-                }
-                else
-                {
-                    bubbleYMovement = Math.min(1.8, prevY + 0.1);
-                }
-            }
-        }
-        if (blockState.getBlock() instanceof BubbleColumnBlock)
-        {
-            if (blockState.getValue(BubbleColumnBlock.DRAG_DOWN))
-            {
-                bubbleYMovement = Math.max(-0.3, prevY - 0.03);
-            }
-            else
-            {
-                bubbleYMovement = Math.min(0.7, prevY + 0.06);
-            }
-        }
-        return y + bubbleYMovement;
     }
 
     /**
@@ -125,7 +170,7 @@ public class MixinSquid extends WaterAnimal
      *
      * <p>Removing {@link net.minecraft.world.entity.LivingEntity#getNoActionTime()} check will restore the movement of squid if the player is far from them.</p>
      *
-     * <p>FYI: I'm not sure what is a Mojang standard for mobs that are far from the player. Since Dolphins and Turtles doesn't freeze their movement when the player is far from them.</p>
+     * <p>FYI: I'm not sure what is a Mojang standard for mobs that are far from the player. Since Dolphins and Turtles don't freeze their movement when the player is far from them.</p>
      */
     @Mixin(targets = "net.minecraft.world.entity.animal.Squid$SquidRandomMovementGoal")
     public abstract static class SquidRandomMovementGoal_MC212687 extends Goal
