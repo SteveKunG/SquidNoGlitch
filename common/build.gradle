@@ -1,5 +1,0 @@
-apply from: "https://raw.githubusercontent.com/SteveKunG/GradleScripts/main/architectury/common.gradle"
-
-architectury {
-    injectInjectables = false
-}

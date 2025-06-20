@@ -1,9 +1,144 @@
+import org.jetbrains.gradle.ext.Gradle
+
 plugins {
-    id "architectury-plugin" version "3.4-SNAPSHOT"
-    id "com.gradleup.shadow" version "8.3.6" apply false
-    id "dev.architectury.loom" version "1.10-SNAPSHOT" apply false
-    id "io.github.CDAGaming.cursegradle" version "1.6.1" apply false
-    id "com.modrinth.minotaur" version "2.+" apply false
+    id "org.jetbrains.gradle.plugin.idea-ext" version "1.1.9"
+    id "com.gtnewhorizons.retrofuturagradle" version "1.4.1"
 }
 
-apply from: "https://raw.githubusercontent.com/SteveKunG/GradleScripts/main/architectury/main.gradle"
+version = "${mod_version}"
+group = "${maven_group}"
+
+base {
+    archivesName = archives_base_name
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(8))
+        // Azul covers the most platforms for Java 8 toolchains, crucially including MacOS arm64
+        vendor.set(JvmVendorSpec.AZUL)
+    }
+}
+
+configurations {
+    embed
+    implementation.extendsFrom(embed)
+}
+
+minecraft {
+    mcVersion.set(minecraft_version)
+
+    mcpMappingChannel.set(mapping_channel)
+    mcpMappingVersion.set(mapping_version)
+
+    useDependencyAccessTransformers.set(true)
+
+    username.set("Developer")
+
+    // Add various JVM arguments here for runtime
+    def args = ["-ea:" + group]
+
+    if (project.hasProperty("use_mixin") && use_mixin.toBoolean()) {
+        args << "-Dmixin.debug=true"
+        args << "-Dmixin.debug.verbose=true"
+        args << "-Dmixin.hotSwap=true"
+        args << "-Dmixin.checks.interfaces=true"
+        args << "-Dmixin.debug.export=true"
+    }
+    extraRunJvmArguments.addAll(args)
+}
+
+repositories {
+    maven {
+        name "CleanroomMC Maven"
+        url "https://maven.cleanroommc.com"
+    }
+}
+
+dependencies {
+    if (project.hasProperty("use_mixin") && use_mixin.toBoolean()) {
+        String mixin = modUtils.enableMixins("zone.rong:mixinbooter:${mixin_booter_version}", "mixins.${mod_id}.refmap.json")
+        api(mixin) {
+            transitive = false
+        }
+        annotationProcessor "org.ow2.asm:asm-debug-all:5.2"
+        annotationProcessor "com.google.guava:guava:32.1.2-jre"
+        annotationProcessor "com.google.code.gson:gson:2.8.9"
+        annotationProcessor(mixin) {
+            transitive = false
+        }
+    }
+}
+
+String fileName = "${archives_base_name}-mc${minecraft_version}"
+
+jar {
+    if (project.hasProperty("use_mixin") && use_mixin.toBoolean()) {
+        manifest {
+            attributes "FMLCorePlugin": "com.stevekung.squidnoglitch.SquidNoGlitchPlugin"
+            attributes "FMLCorePluginContainsFMLMod": true
+            attributes "ForceLoadAsMod": true
+        }
+    }
+
+    archiveVersion = "v${version}"
+    archiveBaseName = fileName
+    from sourceSets.main.output
+}
+
+processResources {
+    // this will ensure that this task is redone when the versions change.
+    inputs.property "version", mod_version
+    inputs.property "mcversion", minecraft_version
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    filesMatching("mcmod.info") { fcd ->
+        fcd.expand(
+                "mod_id": mod_id,
+                "display_name": display_name,
+                "mod_version": mod_version,
+                "mod_description": mod_description,
+                "minecraft_version": minecraft_version
+        )
+    }
+    filesMatching("pack.mcmeta") { fcd ->
+        fcd.expand(
+                "display_name": display_name
+        )
+    }
+
+    // copy everything else, thats not the mcmod.info
+    from(sourceSets.main.resources.srcDirs) {
+        exclude "mcmod.info"
+    }
+}
+
+idea {
+    module {
+        inheritOutputDirs = true
+    }
+    project {
+        settings {
+            runConfigurations {
+                "1. Run Client"(Gradle) {
+                    taskNames = ["runClient"]
+                }
+                "2. Run Server"(Gradle) {
+                    taskNames = ["runServer"]
+                }
+            }
+            compiler.javac {
+                afterEvaluate {
+                    javacAdditionalOptions = "-encoding utf8"
+                    moduleJavacAdditionalOptions = [
+                            (project.name + ".main"): tasks.compileJava.options.compilerArgs.collect { '"' + it + '"' }.join(' ')
+                    ]
+                }
+            }
+        }
+    }
+}
+
+tasks.register("cleanroomAfterSync") {
+    // no-op
+}

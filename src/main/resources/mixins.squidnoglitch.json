@@ -3,10 +3,11 @@
     "minVersion": "0.8.4",
     "package": "com.stevekung.squidnoglitch.mixin",
     "compatibilityLevel": "JAVA_8",
+    "target": "@env(DEFAULT)",
     "mixins": [
-        "MixinSquid",
-        "MixinSquid$SquidRandomMovementGoal_MC132473",
-        "MixinSquid$SquidRandomMovementGoal_MC212687"
+        "MixinEntitySquid",
+        "MixinEntitySquid$AIMoveRandom_MC132473",
+        "MixinEntitySquid$AIMoveRandom_MC212687"
     ],
     "injectors": {
         "defaultRequire": 1
