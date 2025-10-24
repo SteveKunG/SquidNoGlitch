@@ -16,10 +16,6 @@ loom {
     }
 }
 
-dependencies {
-    modRuntimeOnly "curse.maven:lazy-dfu-forge-460819:3249059"
-}
-
 String fileName = "${archives_base_name}-mc${minecraft_version}"
 
 shadowJar {

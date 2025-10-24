@@ -16,10 +16,6 @@ loom {
     }
 }
 
-dependencies {
-    modLocalRuntime "maven.modrinth:lazydfu:0.1.2"
-}
-
 String fileName = "${archives_base_name}-mc${minecraft_version}"
 
 shadowJar {

@@ -3,3 +3,7 @@ apply from: "https://raw.githubusercontent.com/SteveKunG/GradleScripts/main/arch
 architectury {
     injectInjectables = false
 }
+
+tasks.shadowJar {
+    zip64 = true
+}
