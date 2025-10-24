@@ -1,0 +1,53 @@
+name: publish
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version (Example: mc1.12.2-v1.0.0)'
+        required: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Create version tag
+        uses: actions/github-script@v8
+        with:
+          script: |
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: "refs/tags/${{ github.event.inputs.version }}",
+              sha: context.sha
+            })
+
+      - name: Fetch tags
+        run: git fetch --tags
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: |
+            8
+            17
+            21
+          distribution: 'zulu'
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+
+      - name: Validate Gradle Wrapper
+        uses: gradle/actions/wrapper-validation@v5
+
+      - name: Grant execute permission to gradlew
+        run: chmod +x gradlew
+
+      - name: Publish Mod to CurseForge/Modrinth
+        run: ./gradlew curseforge modrinth -Pupload_debug=false -Pcurseforge_api_token=${{ secrets.CURSEFORGE_API_TOKEN }} -Pmodrinth_api_token=${{ secrets.MODRINTH_API_TOKEN }}
