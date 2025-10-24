@@ -43,7 +43,7 @@ public class MixinEntitySquid extends EntityWaterMob
     /**
      * <p>Fix Levitation effect doesn't apply reset fall distance, no bug reported yet.</p>
      */
-    @Inject(method = "onLivingUpdate", at = @At(value = "INVOKE", target = "net/minecraft/entity/passive/EntitySquid.getActivePotionEffect (Lnet/minecraft/potion/Potion;)Lnet/minecraft/potion/PotionEffect;"))
+    @Inject(method = "onLivingUpdate", at = @At(value = "INVOKE", target = "net/minecraft/entity/passive/EntitySquid.getActivePotionEffect(Lnet/minecraft/potion/Potion;)Lnet/minecraft/potion/PotionEffect;"))
     private void squidnoglitch$resetFallDistanceForLevitation(CallbackInfo info)
     {
         this.fallDistance = 0.0f;
