@@ -1,60 +1,14 @@
 name: publish
 on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'Version (Example: mc1.7.10-v1.0.0)'
-        required: true
+  push:
+    tags: [ '*' ]
+
+permissions:
+  contents: write
 
 jobs:
-  publish:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-
-      - name: Create version tag
-        uses: actions/github-script@v8
-        with:
-          script: |
-            github.rest.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: "refs/tags/${{ github.event.inputs.version }}",
-              sha: context.sha
-            })
-
-      - name: Fetch tags
-        run: git fetch --tags
-
-      - name: Set up JDK
-        uses: actions/setup-java@v5
-        with:
-          java-version: |
-            8
-            17
-            21
-          distribution: 'zulu'
-
-      - name: Cache Gradle packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: ${{ runner.os }}-gradle
-
-      - name: Validate Gradle Wrapper
-        uses: gradle/actions/wrapper-validation@v5
-
-      - name: Grant execute permission to gradlew
-        run: chmod +x gradlew
-
-      - name: Publish Mod to CurseForge
-        run: ./gradlew publish
-        env:
-          CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_API_TOKEN }}
-
-      - name: Publish Mod to Modrinth
-        run: ./gradlew publish
-        env:
-          MODRINTH_TOKEN: ${{ secrets.MODRINTH_API_TOKEN }}
+  release-tags:
+    uses: GTNewHorizons/GTNH-Actions-Workflows/.github/workflows/release-tags.yml@master
+    secrets:
+      CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_API_TOKEN }}
+      MODRINTH_TOKEN: ${{ secrets.MODRINTH_API_TOKEN }}
