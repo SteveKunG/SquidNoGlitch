@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version (Example: mc1.12.2-v1.0.0)'
+        description: 'Version (Example: mc1.7.10-v1.0.0)'
         required: true
 
 jobs:
@@ -49,5 +49,12 @@ jobs:
       - name: Grant execute permission to gradlew
         run: chmod +x gradlew
 
-      - name: Publish Mod to CurseForge/Modrinth
-        run: ./gradlew curseforge modrinth -Pupload_debug=false -Pcurseforge_api_token=${{ secrets.CURSEFORGE_API_TOKEN }} -Pmodrinth_api_token=${{ secrets.MODRINTH_API_TOKEN }}
+      - name: Publish Mod to CurseForge
+        run: ./gradlew publish
+        env:
+          CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_API_TOKEN }}
+
+      - name: Publish Mod to Modrinth
+        run: ./gradlew publish
+        env:
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_API_TOKEN }}
