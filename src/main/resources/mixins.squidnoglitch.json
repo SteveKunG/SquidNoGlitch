@@ -1,16 +1,11 @@
 {
-    "required": true,
-    "minVersion": "0.8.4",
-    "package": "com.stevekung.squidnoglitch.mixin",
-    "compatibilityLevel": "JAVA_8",
-    "target": "@env(DEFAULT)",
-    "refmap": "mixins.squidnoglitch.refmap.json",
-    "mixins": [
-        "MixinEntitySquid",
-        "MixinEntitySquid$AIMoveRandom_MC132473",
-        "MixinEntitySquid$AIMoveRandom_MC212687"
-    ],
-    "injectors": {
-        "defaultRequire": 1
-    }
+  "required": true,
+  "minVersion": "0.8.5-GTNH",
+  "refmap": "mixins.squidnoglitch.refmap.json",
+  "target": "@env(DEFAULT)",
+  "compatibilityLevel": "JAVA_8",
+  "package": "com.stevekung.squidnoglitch.mixins",
+  "mixins": [
+    "MixinEntitySquid"
+  ]
 }

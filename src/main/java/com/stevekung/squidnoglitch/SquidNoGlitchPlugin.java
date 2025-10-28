@@ -4,15 +4,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableList;
-
-import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
-
-import zone.rong.mixinbooter.IEarlyMixinLoader;
+import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
+import io.github.tox1cozz.mixinbooterlegacy.IEarlyMixinLoader;
 
 import javax.annotation.Nullable;
 
-@IFMLLoadingPlugin.Name("SquidNoGlitch Core")
-@IFMLLoadingPlugin.MCVersion("1.12.2")
+@IFMLLoadingPlugin.MCVersion("1.7.10")
 public class SquidNoGlitchPlugin implements IFMLLoadingPlugin, IEarlyMixinLoader
 {
     @Override
