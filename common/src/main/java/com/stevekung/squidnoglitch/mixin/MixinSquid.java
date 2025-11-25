@@ -10,7 +10,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.animal.AgeableWaterCreature;
-import net.minecraft.world.entity.animal.Squid;
+import net.minecraft.world.entity.animal.squid.Squid;
 import net.minecraft.world.phys.Vec3;
 
 @Mixin(Squid.class)
