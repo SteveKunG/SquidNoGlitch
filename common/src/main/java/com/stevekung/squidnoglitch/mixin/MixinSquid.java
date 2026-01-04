@@ -33,7 +33,7 @@ public abstract class MixinSquid extends AgeableWaterCreature implements SquidAc
     /**
      * <p>Fix Levitation effect doesn't apply reset fall distance, no bug reported yet.</p>
      */
-    @Inject(method = "aiStep", at = @At(value = "INVOKE", target = "net/minecraft/world/entity/animal/Squid.getEffect(Lnet/minecraft/core/Holder;)Lnet/minecraft/world/effect/MobEffectInstance;"))
+    @Inject(method = "aiStep", at = @At(value = "INVOKE", target = "net/minecraft/world/entity/animal/squid/Squid.getEffect(Lnet/minecraft/core/Holder;)Lnet/minecraft/world/effect/MobEffectInstance;"))
     private void squidnoglitch$resetFallDistanceForLevitation(CallbackInfo info)
     {
         this.resetFallDistance();
@@ -62,7 +62,7 @@ public abstract class MixinSquid extends AgeableWaterCreature implements SquidAc
      *
      * <p>Decreasing Y movement vector to {@code 0.15f} which should stop squids become stuck on land.</p>
      */
-    @Mixin(targets = "net.minecraft.world.entity.animal.Squid$SquidRandomMovementGoal", priority = 1001)
+    @Mixin(targets = "net.minecraft.world.entity.animal.squid.Squid$SquidRandomMovementGoal", priority = 1001)
     public static class SquidRandomMovementGoal_MC132473
     {
         @ModifyConstant(method = "tick", constant = @Constant(floatValue = 0.2F, ordinal = 1))
@@ -79,7 +79,7 @@ public abstract class MixinSquid extends AgeableWaterCreature implements SquidAc
      *
      * <p>FYI: I'm not sure what is a Mojang standard for mobs that are far from the player. Since Dolphins and Turtles doesn't freeze their movement when the player is far from them.</p>
      */
-    @Mixin(targets = "net.minecraft.world.entity.animal.Squid$SquidRandomMovementGoal")
+    @Mixin(targets = "net.minecraft.world.entity.animal.squid.Squid$SquidRandomMovementGoal")
     public abstract static class SquidRandomMovementGoal_MC212687 extends Goal
     {
         @Shadow

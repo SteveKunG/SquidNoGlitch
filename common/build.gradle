@@ -7,3 +7,9 @@ architectury {
 tasks.shadowJar {
     zip64 = true
 }
+
+loom {
+    mixin {
+        useLegacyMixinAp = true
+    }
+}
