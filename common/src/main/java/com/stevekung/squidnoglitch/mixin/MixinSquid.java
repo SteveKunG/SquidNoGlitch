@@ -68,7 +68,7 @@ public abstract class MixinSquid extends AgeableWaterCreature implements SquidAc
         @ModifyConstant(method = "tick", constant = @Constant(floatValue = 0.2F, ordinal = 1))
         private float squidnoglitch$modifyYMovementSpeed(float oldSpeed)
         {
-            return 0.15F;
+            return 0.175f;
         }
     }
 
@@ -91,7 +91,7 @@ public abstract class MixinSquid extends AgeableWaterCreature implements SquidAc
         {
             if (this.squid.getRandom().nextInt(reducedTickDelay(50)) == 0 || !this.squid.isInWater() || !this.squid.hasMovementVector())
             {
-                var f = this.squid.getRandom().nextFloat() * 6.2831855F;
+                var f = this.squid.getRandom().nextFloat() * (float) (Math.PI * 2);
                 ((SquidAccessor) this.squid).squidnoglitch$setMovementVector(new Vec3(Mth.cos(f) * 0.2F, -0.1F + this.squid.getRandom().nextFloat() * 0.2F, Mth.sin(f) * 0.2F));
             }
         }
