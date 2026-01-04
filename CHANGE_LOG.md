@@ -1,1 +1,1 @@
-* Reduced icon file size
+* Adjust squids Y movement speed, closes #9
