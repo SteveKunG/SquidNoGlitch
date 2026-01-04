@@ -1,1 +1,1 @@
-* Adjust squids Y movement speed, closes #9
+* Update to 1.21.11
