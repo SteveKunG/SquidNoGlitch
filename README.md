@@ -1,7 +1,7 @@
 # SquidNoGlitch
 A tiny mod that fixes various vanilla bugs with the squid
 
-Support with Minecraft 1.18.2-1.20.x for Fabric (Quilt maybe?)/Forge
+Support with Minecraft 1.18.2-26.1.x for Fabric/NeoForge
 
 Download on [Modrinth](https://modrinth.com/mod/squid-no-glitch)/[CurseForge](https://curseforge.com/minecraft/mc-mods/squid-no-glitch)
 
