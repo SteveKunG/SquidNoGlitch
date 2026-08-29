@@ -52,7 +52,7 @@ public abstract class MixinSquid extends AgeableWaterCreature implements SquidAc
         if (this.hasEffect(MobEffects.SLOW_FALLING))
         {
             this.resetFallDistance();
-            return -0.05D * (double) (this.getEffect(MobEffects.SLOW_FALLING).getAmplifier() + 1);
+            return -0.05D * (this.getEffect(MobEffects.SLOW_FALLING).getAmplifier() + 1);
         }
         return defaultValue;
     }
