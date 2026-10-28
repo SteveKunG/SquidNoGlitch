@@ -1,1 +1,1 @@
-* Initial release for 26.3
+* Improved compatibility with mod that modify squid movement goal, closes #45
