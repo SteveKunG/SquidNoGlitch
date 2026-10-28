@@ -2,15 +2,15 @@ apply from: "https://raw.githubusercontent.com/SteveKunG/GradleScripts/refs/head
 
 loom {
     runs.configureEach {
-        properties project.commonProperties
-        vmArgs project.commonVmArgs
-        vmArgs project.hotswapVmArgs
+        systemProperties.putAll(rootProject.commonProperties)
+        jvmArguments.addAll(rootProject.commonVmArgs)
+        jvmArguments.addAll(rootProject.hotswapVmArgs)
     }
 
     runs {
         client {
             if (project.hasProperty("usernameAndUUID")) {
-                programArgs project.usernameAndUUID
+                programArguments.addAll(rootProject.usernameAndUUID)
             }
         }
     }
