@@ -1,14 +1,16 @@
 package com.stevekung.squidnoglitch.mixin;
 
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import net.minecraft.util.Mth;
+
+import com.llamalad7.mixinextras.expression.Definition;
+import com.llamalad7.mixinextras.expression.Expression;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.sugar.Local;
+
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.animal.Squid;
 import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.level.block.BubbleColumnBlock;
@@ -100,7 +102,7 @@ public class MixinSquid extends WaterAnimal
         if (this.hasEffect(MobEffects.SLOW_FALLING))
         {
             this.resetFallDistance();
-            return -0.05D * (double) (this.getEffect(MobEffects.SLOW_FALLING).getAmplifier() + 1);
+            return -0.05D * (this.getEffect(MobEffects.SLOW_FALLING).getAmplifier() + 1);
         }
         return defaultValue;
     }
@@ -116,7 +118,7 @@ public class MixinSquid extends WaterAnimal
         @ModifyConstant(method = "tick", constant = @Constant(floatValue = 0.2F, ordinal = 1))
         private float squidnoglitch$modifyYMovementSpeed(float oldSpeed)
         {
-            return 0.15F;
+            return 0.175f;
         }
     }
 
@@ -128,23 +130,14 @@ public class MixinSquid extends WaterAnimal
      * <p>FYI: I'm not sure what is a Mojang standard for mobs that are far from the player. Since Dolphins and Turtles doesn't freeze their movement when the player is far from them.</p>
      */
     @Mixin(targets = "net.minecraft.world.entity.animal.Squid$SquidRandomMovementGoal")
-    public abstract static class SquidRandomMovementGoal_MC212687 extends Goal
+    public static class SquidRandomMovementGoal_MC212687
     {
-        @Shadow
-        @Final
-        Squid squid;
-
-        @Override
-        public void tick()
+        @Definition(id = "i", local = @Local(type = int.class))
+        @Expression("i > 100")
+        @ModifyExpressionValue(method = "tick", at = @At("MIXINEXTRAS:EXPRESSION"))
+        private boolean skipNoActionTime(boolean original)
         {
-            if (this.squid.getRandom().nextInt(reducedTickDelay(50)) == 0 || !this.squid.isInWater() || !this.squid.hasMovementVector())
-            {
-                var f = this.squid.getRandom().nextFloat() * (float) (Math.PI * 2);
-                var tx = Mth.cos(f) * 0.2F;
-                var ty = -0.1F + this.squid.getRandom().nextFloat() * 0.2F; // This constant will be replaced by `SquidRandomMovementGoal_MC132473`
-                var tz = Mth.sin(f) * 0.2F;
-                this.squid.setMovementVector(tx, ty, tz);
-            }
+            return false;
         }
     }
 }

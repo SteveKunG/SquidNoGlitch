@@ -3,3 +3,13 @@ apply from: "https://raw.githubusercontent.com/SteveKunG/GradleScripts/main/arch
 architectury {
     injectInjectables = false
 }
+
+tasks.named("shadowJar") {
+    enabled = false
+}
+
+loom {
+    mixin {
+        useLegacyMixinAp = true
+    }
+}
