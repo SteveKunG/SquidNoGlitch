@@ -4,8 +4,8 @@ architectury {
     injectInjectables = false
 }
 
-tasks.shadowJar {
-    zip64 = true
+tasks.named("shadowJar") {
+    enabled = false
 }
 
 loom {

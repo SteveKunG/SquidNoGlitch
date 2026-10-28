@@ -1,1 +1,1 @@
-* Update to 1.21.11
+* Improved compatibility with mod that modify squid movement goal, closes #45
