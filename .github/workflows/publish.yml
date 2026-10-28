@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version (Example: mc26.1.1-v0.0.1)'
+        description: 'Version (Example: mc26.1.2-v26.1.2.0)'
         required: true
 
 jobs:
@@ -17,18 +17,36 @@ jobs:
         uses: actions/github-script@v9
         with:
           script: |
-            github.rest.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: "refs/tags/${{ github.event.inputs.version }}",
-              sha: context.sha
-            })
+            const tagName = "${{ github.event.inputs.version }}";
+
+            // Check if the tag already exists
+            try {
+              await github.rest.git.getRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `tags/${tagName}`
+              });
+              console.log(`Tag "${tagName}" already exists. Skipping...`);
+            } catch (error) {
+              if (error.status === 404) {
+                // Tag not found → create it
+                await github.rest.git.createRef({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  ref: `refs/tags/${tagName}`,
+                  sha: context.sha
+                });
+                console.log(`Created new tag: ${tagName}`);
+              } else {
+                throw error;
+              }
+            }
 
       - name: Fetch tags
         run: git fetch --tags
 
       - name: Set up JDK 25
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
           java-version: '25'
           distribution: 'temurin'
@@ -41,7 +59,7 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle
 
       - name: Validate Gradle Wrapper
-        uses: gradle/actions/wrapper-validation@v6
+        uses: gradle/actions/wrapper-validation@v6.4.0
 
       - name: Grant execute permission to gradlew
         run: chmod +x gradlew

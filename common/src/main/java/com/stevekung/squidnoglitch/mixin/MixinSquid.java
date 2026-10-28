@@ -1,33 +1,24 @@
 package com.stevekung.squidnoglitch.mixin;
 
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import com.stevekung.squidnoglitch.SquidAccessor;
-import net.minecraft.util.Mth;
+
+import com.llamalad7.mixinextras.expression.Definition;
+import com.llamalad7.mixinextras.expression.Expression;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.sugar.Local;
+
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.animal.AgeableWaterCreature;
 import net.minecraft.world.entity.animal.squid.Squid;
-import net.minecraft.world.phys.Vec3;
 
 @Mixin(Squid.class)
-public abstract class MixinSquid extends AgeableWaterCreature implements SquidAccessor
+public abstract class MixinSquid extends AgeableWaterCreature
 {
-    @Shadow
-    Vec3 movementVector;
-
     MixinSquid()
     {
         super(null, null);
-    }
-
-    @Override
-    public void squidnoglitch$setMovementVector(Vec3 vec3)
-    {
-        this.movementVector = vec3;
     }
 
     /**
@@ -52,7 +43,7 @@ public abstract class MixinSquid extends AgeableWaterCreature implements SquidAc
         if (this.hasEffect(MobEffects.SLOW_FALLING))
         {
             this.resetFallDistance();
-            return -0.05D * (double) (this.getEffect(MobEffects.SLOW_FALLING).getAmplifier() + 1);
+            return -0.05D * (this.getEffect(MobEffects.SLOW_FALLING).getAmplifier() + 1);
         }
         return defaultValue;
     }
@@ -62,7 +53,7 @@ public abstract class MixinSquid extends AgeableWaterCreature implements SquidAc
      *
      * <p>Decreasing Y movement vector to {@code 0.15f} which should stop squids become stuck on land.</p>
      */
-    @Mixin(targets = "net.minecraft.world.entity.animal.squid.Squid$SquidRandomMovementGoal", priority = 1001)
+    @Mixin(targets = "net.minecraft.world.entity.animal.squid.Squid$SquidRandomMovementGoal")
     public static class SquidRandomMovementGoal_MC132473
     {
         @ModifyConstant(method = "tick", constant = @Constant(floatValue = 0.2F, ordinal = 1))
@@ -80,20 +71,14 @@ public abstract class MixinSquid extends AgeableWaterCreature implements SquidAc
      * <p>FYI: I'm not sure what is a Mojang standard for mobs that are far from the player. Since Dolphins and Turtles doesn't freeze their movement when the player is far from them.</p>
      */
     @Mixin(targets = "net.minecraft.world.entity.animal.squid.Squid$SquidRandomMovementGoal")
-    public abstract static class SquidRandomMovementGoal_MC212687 extends Goal
+    public static class SquidRandomMovementGoal_MC212687
     {
-        @Shadow
-        @Final
-        Squid squid;
-
-        @Override
-        public void tick()
+        @Definition(id = "noActionTime", local = @Local(type = int.class))
+        @Expression("noActionTime > 100")
+        @ModifyExpressionValue(method = "tick", at = @At("MIXINEXTRAS:EXPRESSION"))
+        private boolean skipNoActionTime(boolean original)
         {
-            if (this.squid.getRandom().nextInt(reducedTickDelay(50)) == 0 || !this.squid.isInWater() || !this.squid.hasMovementVector())
-            {
-                var f = this.squid.getRandom().nextFloat() * (float) (Math.PI * 2);
-                ((SquidAccessor) this.squid).squidnoglitch$setMovementVector(new Vec3(Mth.cos(f) * 0.2F, -0.1F + this.squid.getRandom().nextFloat() * 0.2F, Mth.sin(f) * 0.2F));
-            }
+            return false;
         }
     }
 }
