@@ -1,11 +1,10 @@
 # SquidNoGlitch
 A tiny mod that fixes various vanilla bugs with the squid
 
-Support with Minecraft 1.18.2-1.20.x for Fabric (Quilt maybe?)/Forge
-
 Download on [Modrinth](https://modrinth.com/mod/squid-no-glitch)/[CurseForge](https://curseforge.com/minecraft/mc-mods/squid-no-glitch)
 
 ### List of bug fixes for squid
+
 - Adding check to prevent movement de-sync on the client. Which resolves [MC-39263](https://bugs.mojang.com/browse/MC-39263), [MC-58294](https://bugs.mojang.com/browse/MC-58294), [MC-89883](https://bugs.mojang.com/browse/MC-89883), [MC-136421](https://bugs.mojang.com/browse/MC-136421), [MC-212213](https://bugs.mojang.com/browse/MC-212213), [MC-225422](https://bugs.mojang.com/browse/MC-225422) and partially fixes [MC-134626](https://bugs.mojang.com/browse/MC-134626)
 - Fix Levitation effect doesn't apply reset fall distance, no bug reported yet.
 - Adding Slow Falling effect movement vector to squids. And reset fall distance. [MC-167008](https://bugs.mojang.com/browse/MC-167008).
@@ -13,6 +12,7 @@ Download on [Modrinth](https://modrinth.com/mod/squid-no-glitch)/[CurseForge](ht
 - Removing `getNoActionTime()` check will restore the movement of squid if the player is far from them. [MC-212687](https://bugs.mojang.com/browse/MC-212687).
 
 ### Installation
+
 Make sure to install on both client and server side for a better result!
-- Install Fabric Loader/MinecraftForge
+- Install Fabric Loader/MinecraftForge/NeoForge
 - Copy mod into `mods` folder

@@ -1,1 +1,1 @@
-* Mod no longer supports multiple versions at the same time, this will cause a problem with mapping issues.
+* Improved compatibility with mod that modify squid movement goal, closes #45
